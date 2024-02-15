@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <title>0xma - Cyber Security Articles</title>
-        
+
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -30,7 +30,7 @@
                     <li class="nav_li"><a href="books/index.html">Book Summaries</a></li>
                     <li class="nav_li"><a href="hacking/index.html">Hacking Articles</a></li>
                     <li class="nav_li"><a href="#">Home</a></li>
-                </ul>    
+                </ul>
             </div>
         </header>
         <br>
@@ -39,6 +39,21 @@
         <div class="container">
             <div class="left_empty_space"></div>
             <div class="center">
+                <div class="index_titles top_title">
+                    <a href="hacking/clicker_file_write.html"><h3>Exploiting File Write Vulnerability</h3></a>
+                    <p class="date">February 15, 2024</p>
+                    <p>In this tutorial we will see how to get a reverse shell on a web application that runs PHP. The website offers a game that records the number of times you click on the page. The web application allows us to export the scoreboard in .txt, .json, or .html formats. However, we can also export the scoreboard in PHP format and write a custom PHP file which will allow us to run commands.</p>
+                </div>
+                <div class="index_titles top_title">
+                    <a href="hacking/clicker_sql_injection.html"><h3>SQL Injection - Example 6</h3></a>
+                    <p class="date">February 15, 2024</p>
+                    <p>In this tutorial, we will see how to perform a SQL injection attack. The website offers a game that records the number of times you click on the page. However, the PHP function that saves the user score is vulnerable to SQL injection attack.</p>
+                </div>
+                <div class="index_titles top_title">
+                    <a href="hacking/clicker_newline_injection.html"><h3>Newline Injection</h3></a>
+                    <p class="date">February 15, 2024</p>
+                    <p>In this tutorial, we will see how to perform a newline injection attack. The website offers a game that records the number of times you click on the page. However, the PHP function that saves the user score is vulnerable to newline injection attack.</p>
+                </div>
                 <div class="index_titles top_title">
                     <a href="hacking/retired_file_read.html"><h3>Bypass PHP URL Filtering to Perform LFI Attack</h3></a>
                     <p class="date">September 29, 2023</p>
@@ -193,47 +208,47 @@
                     <a href="hacking/arp_privilege_escalation.html"><h3>ARP Privilege Escalation</h3></a>
                     <p class="date">April 24, 2022</p>
                     <p>In this tutorial, we will see how to use ARP to read files that can be read by users with root level privileges. We are assuming that the ARP tool has the "ep" capabilities set. If these capabilities are set then it can allow us to read any file that we want on the Linux system.</p>
-                </div>                
+                </div>
                 <div class="index_titles top_title">
                     <a href="hacking/privilege_escalation_via_server_operators_group.html"><h3>Privilege Escalation via Server Operators Group</h3></a>
                     <p class="date">April 23, 2022</p>
                     <p>In this tutorial, we will see how to escalate our privileges from an account that is a member of the "Server Operators Group" so that we could gain "nt authority\system" level privileges. Members of this group can start and stop system services.</p>
-                </div>                
+                </div>
                 <div class="index_titles top_title">
                     <a href="hacking/earlyaccess_xss.html"><h3>Capture LDAP Credentials</h3></a>
                     <p class="date">April 22, 2022</p>
                     <p>In this tutorial, we will see how to capture the LDAP credentials of our target that is running a printer service. We have access to the printer's configuration settings. These settings allows us to specify a server's IP address with which it will be communicating. We will be using our own box's IP address and once the Printer service communicates with us we will be able to capture the credentials.</p>
-                </div>                
+                </div>
                 <div class="index_titles top_title">
                     <a href="hacking/earlyaccess_xss.html"><h3>Cross-Site Scripting (XSS) Attack - Example 2</h3></a>
                     <p class="date">April 17, 2022</p>
                     <p>In this tutorial, we will see how to perform a cross-site scripting (XSS) attack and retrieve cookies of another user. We inject the XSS payload in the username section of the user's profile. Once the user sends a message to the site administrators, the XSS payload is triggered and we retrieve the cookies.</p>
-                </div>                
+                </div>
                 <div class="index_titles top_title">
                     <a href="hacking/validation_sql_injection.html"><h3>Second Order SQL Injection - Example 2</h3></a>
                     <p class="date">April 12, 2022</p>
                     <p>In this tutorial, we will see how to perform a second order SQL injection. The SQL injection will be performed on an item from the drop down list which the developer forgot to filter for bad characters. After revealing the contents of the database, we will see how to write a PHP file on the web server and gain reverse shell on the box.</p>
-                </div>                
+                </div>
                 <div class="index_titles top_title">
                     <a href="hacking/writer_sql_injection.html"><h3>SQL Injection - Example 1</h3></a>
                     <p class="date">April 04, 2022</p>
                     <p>In this tutorial, we will see how to perform a SQL injection on the login page of a website. We will learn how to use "ffuf" to see if the login page is vulnerable to SQL injection by using different payloads from danielmiessler's SecLists. And at the end of this tutorial, we will see how to write a simple Python script to perform a LFI (Local File Inclusion) attack on the web application.</p>
-                </div>                
+                </div>
                 <div class="index_titles top_title">
                     <a href="hacking/stacked_xss.html"><h3>XSS (Cross-Site Scripting) - Example 1</h3></a>
                     <p class="date">March 29, 2022</p>
                     <p>In this tutorial, we will see how to perform XXS (Cross-Site Scripting) attack by modifying the "Referer" header of our request that is used while we are submitting a "Contact Us" form. Using this attack technique, we will see how to read a user's email by writing some JavaScript code.</p>
-                </div>                
+                </div>
                 <div class="index_titles top_title">
                     <a href="hacking/bypass_apparmor_with_perl_script.html"><h3>Bypass AppArmor with Perl Script</h3></a>
                     <p class="date">March 18, 2022</p>
                     <p>In this tutorial, we will see how to bypass AppArmor using a Perl script. AppArmor is a Linux kernel security module that allows the system administrator to restrict programs' capabilities with per-program profiles.</p>
-                </div>                
+                </div>
                 <div class="index_titles top_title">
                     <a href="hacking/earlyaccess_sql_injection.html"><h3>Second Order SQL Injection - Example 1</h3></a>
                     <p class="date">March 13, 2022</p>
                     <p>In this tutorial, we will see how to perform a second order SQL injection and read the contents of the database. In a second order SQL injection, the attacker's input is injected into the database and is later used in a SQL query when a user accesses some other functionality of the same application.</p>
-                </div>                
+                </div>
                 <div class="index_titles top_title">
                     <a href="hacking/nunchucks_server_side_template_injection.html"><h3>Server-Side Template Injection - Example 1</h3></a>
                     <p class="date">March 09, 2022</p>
@@ -389,7 +404,7 @@
         <div class="right_empty_space"></div>
         <footer>
             <div class="footer">
-                <span class="copyright">Copyright &copy; 2022</span>
+                <span class="copyright">Copyright &copy; 2024</span>
             </div>
         </footer>
     </body>
