@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>AS-REP Roasting using Linux and Windows</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+        <link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Encode+Sans+SC&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="../css/style.css">
+        <meta name="description" content="">
+        <meta name="keywords" content="">
+        <meta name="author" content="0xma">
+    </head>
+    <body>
+        <header class="header">
+            <div class="text-box">
+                <h1 class="heading-primary">
+                    <span class="heading-primary-main">0xma</span>
+                    <span class="heading-primary-sub">Cyber Security Articles</span>
+                </h1>
+            </div>
+            <div class="nav_box">
+                <ul class="nav_ul">
+                    <li class="nav_li"><a href="https://twitter.com/0xmaCyberSec">About</a></li>
+                    <li class="nav_li"><a href="https://github.com/0xma/">GitHub</a></li>
+                    <li class="nav_li"><a href="../books/index.html">Book Summaries</a></li>
+                    <li class="nav_li"><a href="index.html">Hacking Articles</a></li>
+                    <li class="nav_li"><a href="../index.html">Home</a></li>
+                </ul>
+            </div>
+        </header>
+        <br>
+        <br>
+        <br>
+        <div class="container">
+            <div class="left_empty_space"></div>
+            <div class="center">
+                <p class="date">April 05, 2025</p>
+                <h1 class="heading">AS-REP Roasting using Linux and Windows</h1>
+                <p>In this tutorial we will see how to perform an ASREP Roasting attack using Linux and Windows. We will first use Impacket's GetNPUsers.py on Linux and then use PowerView, SharpView, and Rubeus on Windows to dump the hashes. And lastly, we will see how to crack those hashes using hashcat.</p>
+                <p>AS-REP Roasting is a technique used in Windows Active Directory environments to extract and crack password hashes for user accounts that have Kerberos pre-authentication disabled. In a typical Kerberos authentication process, a client first sends an Authentication Service Request (AS-REQ) to the Key Distribution Center (KDC), and the KDC responds with a Ticket Granting Ticket (TGT) only after verifying the client's identity using pre-authentication. However, if pre-authentication is disabled for a user account, the KDC will respond to any unauthenticated AS-REQ with an AS-REP message that contains a portion encrypted with the user’s NTLM hash. This allows attackers to request AS-REP messages for such accounts and obtain encrypted data that can then be brute-forced offline using tools like Hashcat or John the Ripper to recover the user's password.</p>
+                <p>The danger lies in the fact that this attack does not require any credentials or elevated privileges to execute—any domain user or unauthenticated attacker (if allowed to query the KDC) can perform it. To carry out the attack, an adversary typically uses tools such as Impacket’s GetNPUsers.py script to enumerate users with the "Do not require Kerberos preauthentication" flag set and retrieve their AS-REP messages. These hashes can then be cracked offline, potentially revealing weak user passwords and enabling lateral movement or privilege escalation within the network. The best mitigation is to ensure no users—especially service accounts—have pre-authentication disabled unless absolutely necessary.</p>
+                <p>Using <span class="command">GetNPUsers.py</span>, we can specify the Domain Controller's IP address (<span class="command">-dc-ip</span>), the domain name "jab.htb" and the username which in our case is "lmccarty". The <span class="command">-request</span> option requests the user's hash if available. It will prompt for a password, just hit enter without typing any password. We can see that this user doesn't have pre-authentication disabled.</p>
+                <img src="../img/as_rep_roasting_linux_and_windows/as_rep_roasting_linux_02.png" alt="" title="">
+                <br>
+                <br>
+                <p>The next user we will try is "jmontgomery". Again, hit Enter when prompted for a password. This user, however, has pre-authentication disabled. We can see the user's password hash being exposed.</p>
+                <img src="../img/as_rep_roasting_linux_and_windows/as_rep_roasting_linux_03.png" alt="" title="">
+                <br>
+                <br>
+                <p>Let's try a list of users to see if any of them has pre-authentication disabled.</p>
+                <img src="../img/as_rep_roasting_linux_and_windows/as_rep_roasting_linux_01.png" alt="" title="">
+                <br>
+                <br>
+                <p>We can pass a list of usernames by using the <span class="command">-usersfile</span> option. The tool will try each username in turn to see if it has pre-authentication disabled. We can see the hashes for "jmontgomery", "lbradford", and "mlowe" users.</p>
+                <img src="../img/as_rep_roasting_linux_and_windows/as_rep_roasting_linux_04.png" alt="" title="">
+                <br>
+                <br>
+                <p>We can also save the hashes to a file using the <span class="command">-outputfile</span> option.</p>
+                <img src="../img/as_rep_roasting_linux_and_windows/as_rep_roasting_linux_05.png" alt="" title="">
+                <br>
+                <br>
+                <p>This shows the file to which the hashes has been saved.</p>
+                <img src="../img/as_rep_roasting_linux_and_windows/as_rep_roasting_linux_06.png" alt="" title="">
+                <br>
+                <br>
+                <p>Let's use <span class="command">hashcat</span> to crack these hashes. In order to crack these hashes we need to use the 18200 mode and we will use the "rockyou.txt" file to brute force the passwords. We can see that out of the three hashes, it was successful in cracking the hash for the "jmontgomery" user.</p>
+                <img src="../img/as_rep_roasting_linux_and_windows/as_rep_roasting_linux_07.png" alt="" title="">
+                <img src="../img/as_rep_roasting_linux_and_windows/as_rep_roasting_linux_08.png" alt="" title="">
+                <br>
+                <br>
+                <p>Let's say we are logged into a Windows machine and we want to see if there are any users that have pre-authentication disabled. We can use PowerView to dump the hashes but first we will have to import the PowerView module.</p>
+                <img src="../img/as_rep_roasting_linux_and_windows/as_rep_roasting_windows_01.png" alt="" title="">
+                <br>
+                <br>
+                <p>Now that PowerView is imported, we can use the <span class="command">Get-DomainUser</span> cmdlet and pass "DONT_REQ_PREAUTH" to the <span class="command">-UACFilter</span> option. It shows that the "D.Klay" user has pre-authentication disabled.</p>
+                <img src="../img/as_rep_roasting_linux_and_windows/as_rep_roasting_windows_02.png" alt="" title="">
+                <br>
+                <br>
+                <p>We can do the same thing with <span class="command">SharpView</span>.</p>
+                <img src="../img/as_rep_roasting_linux_and_windows/as_rep_roasting_windows_03.png" alt="" title="">
+                <br>
+                <br>
+                <p>Now that we know that there is a user who has pre-authentication disabled, we can start dumping the user's hash. We will be using <span class="command">Rubeus</span> for that. The <span class="command">/user</span> option takes the username, the <span class="command">/domain</span> option takes the domain name and the <span class="command">/dc</span> option takes the domain controller name. The <span class="command">/nowrap</span> flag causes the output to not wrap per line.</p>
+                <img src="../img/as_rep_roasting_linux_and_windows/as_rep_roasting_windows_04.png" alt="" title="">
+                <br>
+                <br>
+                <p>We can also save the hash to a file using the <span class="command">/outfile</span> option.</p>
+                <img src="../img/as_rep_roasting_linux_and_windows/as_rep_roasting_windows_05.png" alt="" title="">
+                <br>
+                <br>
+                <p>It shows that the hash has been saved to the file. Now we can proceed on to cracking the hash using <span class="command">hashcat</span>.</p>
+                <img src="../img/as_rep_roasting_linux_and_windows/as_rep_roasting_windows_06.png" alt="" title="">                
+                <p>If you liked reading this article, you can follow me on Twitter: <a href="https://twitter.com/0xmaCyberSec">0xmaCyberSec</a>.</p>
+                <br>
+                <hr>
+                <br>
+                <!-- <div id="right_margin_widget">
+                    <div class="widget_title">Latest Tutorials</div>
+                        <hr>
+                        <ul class="remove_bullet_points">
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                        </ul>
+                    </div>
+                </div> -->
+                <br>
+                <br>
+                <br>
+            </div>
+        </div>
+        <div class="right_empty_space"></div>
+        <footer>
+            <div class="footer">
+                <span class="copyright">Copyright &copy; 2025</span>
+            </div>
+        </footer>
+    </body>
+</html>
