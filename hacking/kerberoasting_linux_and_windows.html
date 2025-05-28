@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Kerberoasting from Linux and Windows</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+        <link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Encode+Sans+SC&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="../css/style.css">
+        <meta name="description" content="">
+        <meta name="keywords" content="">
+        <meta name="author" content="0xma">
+    </head>
+    <body>
+        <header class="header">
+            <div class="text-box">
+                <h1 class="heading-primary">
+                    <span class="heading-primary-main">0xma</span>
+                    <span class="heading-primary-sub">Cyber Security Articles</span>
+                </h1>
+            </div>
+            <div class="nav_box">
+                <ul class="nav_ul">
+                    <li class="nav_li"><a href="https://twitter.com/0xmaCyberSec">About</a></li>
+                    <li class="nav_li"><a href="https://github.com/0xma/">GitHub</a></li>
+                    <li class="nav_li"><a href="../books/index.html">Book Summaries</a></li>
+                    <li class="nav_li"><a href="index.html">Hacking Articles</a></li>
+                    <li class="nav_li"><a href="../index.html">Home</a></li>
+                </ul>
+            </div>
+        </header>
+        <br>
+        <br>
+        <br>
+        <div class="container">
+            <div class="left_empty_space"></div>
+            <div class="center">
+                <p class="date">April 20, 2025</p>
+                <h1 class="heading">Kerberoasting from Linux and Windows</h1>
+                <p>In this tutorial we will see how to perform an Kerberoasting attack using Linux and Windows. We will first use Impacket's GetUserSPNs.py on Linux and then use setspn.exe, Mimikatz, PowerView and Rubeus on Windows to dump the hashes. And lastly, we will see how to crack those hashes using hashcat.</p>
+                <p>Kerberoasting is a powerful post-exploitation technique that targets service accounts in Active Directory environments by taking advantage of weaknesses in the Kerberos authentication protocol. Once an attacker gains a foothold on a domain-joined machine—typically as a low-privileged user—they can request Ticket Granting Service (TGS) tickets for any service running under a domain account that has a Service Principal Name (SPN) registered. These tickets are encrypted with the service account's NTLM hash. Since the attacker receives a copy of the ticket, they can extract it and attempt to crack the hash offline, without fear of triggering account lockouts or raising alarms on the domain.</p>
+                <p>What makes Kerberoasting particularly dangerous is that it relies entirely on legitimate features of the Kerberos protocol, making detection and prevention challenging in poorly monitored environments. Many service accounts use weak or rarely rotated passwords, which makes them ideal targets for offline brute-force or dictionary attacks. Once an attacker successfully cracks the hash, they gain access to the plaintext credentials of the service account—often revealing elevated privileges or even domain admin access. This technique highlights the critical need for organizations to implement strong password policies, monitor ticket requests, and regularly audit SPN accounts to mitigate the risk of privilege escalation through Kerberoasting.</p>
+                <p>We can use the <span class="command">GetUserSPNs.py</span> script from impacket to check for kerberoastable users. The <span class="command">-dc-ip</span> option will take the IP address of the domain controller. The domain name is "search.htb" and we are enumerating using the "hope.sharp" user. It was able to find an account by the name of "web_svc" with a SPN of: <span class="quote">RESEARCH/web_svc.search.htb:60001</span>.</p>
+                <img src="../img/kerberoasting/kerberoasting_linux_01.png" alt="" title="">
+                <br>
+                <br>
+                <p>The <span class="command">-request</span> option requests the TGS Ticket or the Service Ticket.</p>
+                <img src="../img/kerberoasting/kerberoasting_linux_02.png" alt="" title="">
+                <br>
+                <br>
+                <p>We can save the TGS Ticket or the Service Ticket to a file using the <span class="command">-outputfile</span> option.</p>
+                <img src="../img/kerberoasting/kerberoasting_linux_03.png" alt="" title="">
+                <br>
+                <br>
+                <p>It shows the ticket.</p>
+                <img src="../img/kerberoasting/kerberoasting_linux_04.png" alt="" title="">
+                <br>
+                <br>
+                <p>Now let's crack the ticket using <span class="command">hashcat</span>. We can see that it was able to find the password.</p>
+                <img src="../img/kerberoasting/kerberoasting_linux_05.png" alt="" title="">
+                <img src="../img/kerberoasting/kerberoasting_linux_06.png" alt="" title="">
+                <img src="../img/kerberoasting/kerberoasting_linux_07.png" alt="" title="">
+                <p>It's time to find a kerberoastable user using Windows. The <span class="command">setspn.exe</span> command enables us to read, modify, and delete SPNs. We were able to enumerate some SPNs below.</p>
+                <img src="../img/kerberoasting/kerberoasting_windows_001.png" alt="" title="">
+                <br>
+                <br>
+                <p>We can use <span class="command">mimikatz</span> on Windows to dump the Kerberos tickets. In here, we can see three tickets available to us. Without using the <span class="command">base64 /out:true</span>, it will extract the tickets and write them to ".kirbi" files.</p>
+                <img src="../img/kerberoasting/kerberoasting_windows_002.png" alt="" title="">
+                <img src="../img/kerberoasting/kerberoasting_windows_003.png" alt="" title="">
+                <img src="../img/kerberoasting/kerberoasting_windows_004.png" alt="" title="">
+                <img src="../img/kerberoasting/kerberoasting_windows_005.png" alt="" title="">
+                <br>
+                <br>
+                <p>Let's see how to find kerberoastable users using PowerView. But first, we have to import the module.</p>
+                <img src="../img/kerberoasting/kerberoasting_windows_006.png" alt="" title="">
+                <br>
+                <br>
+                <p>The <span class="command">Get-DomainUser</span> cmdlet with the <span class="command">-SPN</span> flag finds all the kerberoastable users. We can see that it was able to find a SPN called <span class="quote">kadmin/changepw</span> and another one called <span class="quote">nonexistent/whatthechuck</span>.</p>
+                <img src="../img/kerberoasting/kerberoasting_windows_007.png" alt="" title="">
+                <img src="../img/kerberoasting/kerberoasting_windows_008.png" alt="" title="">
+                <br>
+                <br>
+                <p>It shows the corresponding SAM account names for the two SPNs found.</p>
+                <img src="../img/kerberoasting/kerberoasting_windows_009.png" alt="" title="">
+                <br>
+                <br>
+                <p>When we pass the SPNs to the <span class="command">Get-DomainSPNTicket</span> cmdlet, it shows us the hashes for the SPNs which we can crack with <span class="command">hashcat</span>.</p>
+                <img src="../img/kerberoasting/kerberoasting_windows_010.png" alt="" title="">
+                <img src="../img/kerberoasting/kerberoasting_windows_011.png" alt="" title="">
+                <br>
+                <br>
+                <p>The <span class="command">Export-Csv</span> cmdlet saves the hashes to a CSV formatted file.</p>
+                <img src="../img/kerberoasting/kerberoasting_windows_012.png" alt="" title="">
+                <br>
+                <br>
+                <p>Let's look at another way of retrieving the SPN hashes. But first, we have to import the <span class="command">PowerView</span> module.</p>
+                <img src="../img/kerberoasting/kerberoasting_windows_013.png" alt="" title="">
+                <br>
+                <br>
+                <p>After importing the required module, we can run <span class="command">Invoke-Kerberoast</span> to retrieve SPN hashes.</p>
+                <img src="../img/kerberoasting/kerberoasting_windows_014.png" alt="" title="">
+                <br>
+                <br>
+                <p><span class="command">Rubeus.exe</span> can also be used to retrieve SPN hashes. We have to pass the <span class="command">kerberoast</span> option to it. And we can also use <span class="command">/nowrap</span> to simplify the copy and paste process because it will prevent the hash from being column wrapped.</p>
+                <img src="../img/kerberoasting/kerberoasting_windows_015.png" alt="" title="">
+                <br>
+                <br>
+                <p>We can save the SPN hash to a file as well by using the <span class="command">/outfile</span> option.</p>
+                <img src="../img/kerberoasting/kerberoasting_windows_016.png" alt="" title="">
+                <br>
+                <br>
+                <p>Let's look at another scenario. Let's say that you have identified two SPNs but when trying to dump the hashes, it only shows the hash for one SPN.</p>
+                <img src="../img/kerberoasting/kerberoasting_windows_017.png" alt="" title="">
+                <br>
+                <br>
+                <p>We can see that the hash for "RSA_4810" is missing.</p>
+                <img src="../img/kerberoasting/kerberoasting_windows_018.png" alt="" title="">
+                <br>
+                <br>
+                <p>We can use PowerShell to make TGS ticket request for an account.</p>
+                <img src="../img/kerberoasting/kerberoasting_windows_019.png" alt="" title="">
+                <br>
+                <br>
+                <p>Once the TGS ticket has been received, we can dump the hashes.</p>
+                <img src="../img/kerberoasting/kerberoasting_windows_020.png" alt="" title="">
+                <img src="../img/kerberoasting/kerberoasting_windows_021.png" alt="" title="">
+                <br>
+                <br>
+                <p>If you have more than one user that you would like to request TGS tickets for, then you can pass the output from the <span class="command">setspn.exe</span> command to retrieve the TGS tickets for all the users identified.</p>
+                <img src="../img/kerberoasting/kerberoasting_windows_022.png" alt="" title="">
+                <p>If you liked reading this article, you can follow me on Twitter: <a href="https://twitter.com/0xmaCyberSec">0xmaCyberSec</a>.</p>
+                <br>
+                <hr>
+                <br>
+                    <!-- <div id="right_margin_widget">
+                        <div class="widget_title">Latest Tutorials</div>
+                        <hr>
+                        <ul class="remove_bullet_points">
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                        </ul>
+                    </div> -->
+                </div>
+                <br>
+                <br>
+                <br>
+            </div>
+        </div>
+        <div class="right_empty_space"></div>
+        <footer>
+            <div class="footer">
+                <span class="copyright">Copyright &copy; 2025</span>
+            </div>
+        </footer>
+    </body>
+</html>

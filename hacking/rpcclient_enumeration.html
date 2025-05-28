@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>rpcclient Enumeration</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+        <link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Encode+Sans+SC&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="../css/style.css">
+        <meta name="description" content="">
+        <meta name="keywords" content="">
+        <meta name="author" content="0xma">
+    </head>
+    <body>
+        <header class="header">
+            <div class="text-box">
+                <h1 class="heading-primary">
+                    <span class="heading-primary-main">0xma</span>
+                    <span class="heading-primary-sub">Cyber Security Articles</span>
+                </h1>
+            </div>
+            <div class="nav_box">
+                <ul class="nav_ul">
+                    <li class="nav_li"><a href="https://twitter.com/0xmaCyberSec">About</a></li>
+                    <li class="nav_li"><a href="https://github.com/0xma/">GitHub</a></li>
+                    <li class="nav_li"><a href="../books/index.html">Book Summaries</a></li>
+                    <li class="nav_li"><a href="index.html">Hacking Articles</a></li>
+                    <li class="nav_li"><a href="../index.html">Home</a></li>
+                </ul>
+            </div>
+        </header>
+        <br>
+        <br>
+        <br>
+        <div class="container">
+            <div class="left_empty_space"></div>
+            <div class="center">
+                <p class="date">May 28, 2025</p>
+                <h1 class="heading">rpcclient Enumeration</h1>
+                <p>Domain enumeration is a critical step in network reconnaissance, especially in Windows environments. One powerful yet often overlooked tool for this task is rpcclient, a command-line utility that interacts with the Windows RPC service. In this post, we’ll explore how to use rpcclient to gather valuable domain information for security assessments.</p>
+                <p>First, let's connect to the target as the "dave" user.</p>
+                <img src="../img/rpc_enumeration/001.png" alt="" title="">
+                <br>
+                <br>
+                <p><span class="command">querydominfo</span> displays the domain name, numbers of users, groups and aliases on the target, and the server role.</p>
+                <img src="../img/rpc_enumeration/002.png" alt="" title="">
+                <br>
+                <br>
+                <p><span class="command">enumdomusers</span> displays a list of users on the target and their RIDs.</p>
+                <img src="../img/rpc_enumeration/003.png" alt="" title="">
+                <br>
+                <br>
+                <p><span class="command">queryuser [RID]</span> displays the home drive, description, logon time information, password information, user RID and the group RID.</p>
+                <img src="../img/rpc_enumeration/004.png" alt="" title="">
+                <br>
+                <br>
+                <p><span class="command">enumdomgroups</span> displays a list of groups and their RIDs.</p>
+                <img src="../img/rpc_enumeration/005.png" alt="" title="">
+                <br>
+                <br>
+                <p><span class="command">querygroup [RID]</span> displays information about a particular group (in this case the Domain Users).</p>
+                <img src="../img/rpc_enumeration/006.png" alt="" title="">
+                <br>
+                <br>
+                <p></p>
+                <!-- <img src="../img/rpc_enumeration/007.png" alt="" title=""> -->
+                <p><span class="command">enumprivs</span> displays a list of the current user's privileges.</p>
+                <img src="../img/rpc_enumeration/008.png" alt="" title="">
+                <img src="../img/rpc_enumeration/009.png" alt="" title="">
+                <!-- <img src="../img/rpc_enumeration/010.png" alt="" title=""> -->
+                <br>
+                <br>
+                <p><span class="command">enumprivs [RID]</span> displays the privileges for a particular user. In this case, it is for the user "mike".</p>
+                <img src="../img/rpc_enumeration/011.png" alt="" title="">
+                <img src="../img/rpc_enumeration/012.png" alt="" title="">
+                <br>
+                <br>
+                <p><span class="command">getdompwinfo</span> queries and displays the domain password policy settings.</p>
+                <img src="../img/rpc_enumeration/013.png" alt="" title="">
+                <p><span class="command">getusrdompwinfo</span> provides a mix of information about the current user's password settings and domain-level policies relevant to that user.</p>
+                <img src="../img/rpc_enumeration/014.png" alt="" title="">
+                <br>
+                <br>
+                <p><span class="command">lsaenumsid</span> enumerates the Security Identifiers (SIDs) stored in the Local Security Authority (LSA) of the target.</p>
+                <img src="../img/rpc_enumeration/015.png" alt="" title="">
+                <img src="../img/rpc_enumeration/016.png" alt="" title="">
+                <br>
+                <br>
+                <p>We can resolve these SIDs (Security Identifiers) using <span class="command">lookupsids</span>.</p>
+                <img src="../img/rpc_enumeration/017.png" alt="" title="">
+                <br>
+                <br>
+                <p>The <span class="command">lookupnames</span> command is the reverse of <span class=command>lookupsids</span>: it resolves account names to SIDs.</p>
+                <img src="../img/rpc_enumeration/018.png" alt="" title="">
+                <br>
+                <br>
+                <p><span class="command">enumalsgroups</span> is used to enumerate alias groups (also known as local groups) within a specified domain or policy handle.</p>
+                <img src="../img/rpc_enumeration/019.png" alt="" title="">
+                <br>
+                <br>
+                <p><span class="command">enumdomains</span> is used to enumerate domain names that are known to the Local Security Authority (LSA).</p>
+                <img src="../img/rpc_enumeration/020.png" alt="" title="">
+                <br>
+                <br>
+                <p><span class="command">lookupdomain</span> is used to resolve a domain name to its SID (Security Identifier).</p>
+                <img src="../img/rpc_enumeration/021.png" alt="" title="">
+                <br>
+                <br>
+                <p><span class="command">lsaquery</span> displays the domain name and its SID.</p>
+                <img src="../img/rpc_enumeration/022.png" alt="" title="">
+                <br>
+                <br>
+                <p><span class="command">samlookuprids</span> is used to resolve Relative Identifiers (RIDs) within a domain to their corresponding user or group names and types.</p>
+                <img src="../img/rpc_enumeration/023.png" alt="" title="">
+                <br>
+                <br>
+                <p><span class="command">querydispinfo</span> displays the RIDs, account names, full names, and the description for the users stored in the SAM (Security Account Manager) database.</p>
+                <img src="../img/rpc_enumeration/024.png" alt="" title="">
+                <br>
+                <br>
+                <p><span class="command">netshareenum</span> lists the shared resources (network shares) available on the target.</p>
+                <img src="../img/rpc_enumeration/025.png" alt="" title="">
+                <br>
+                <br>
+                <p><span class="command">netsharegetinfo</span> retrieves the share type, share description, permissions, and path to a particular share drive.</p>
+                <img src="../img/rpc_enumeration/026.png" alt="" title="">
+                <p>If you liked reading this article, you can follow me on Twitter: <a href="https://twitter.com/0xmaCyberSec">0xmaCyberSec</a>.</p>
+                <br>
+                <hr>
+                <br>
+                    <!-- <div id="right_margin_widget">
+                        <div class="widget_title">Latest Tutorials</div>
+                        <hr>
+                        <ul class="remove_bullet_points">
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                            <li class="style_bullet_points"><a href="#" class="widget_links"></a></li>
+                        </ul>
+                    </div> -->
+                </div>
+                <br>
+                <br>
+                <br>
+            </div>
+        </div>
+        <div class="right_empty_space"></div>
+        <footer>
+            <div class="footer">
+                <span class="copyright">Copyright &copy; 2025</span>
+            </div>
+        </footer>
+    </body>
+</html>
